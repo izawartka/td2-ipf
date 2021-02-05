@@ -12,7 +12,8 @@ używalności, póki co jest coś takiego. Miłej zabawy!
 - Wiele więcej...
 
 ## Jak używać?
-Sketch z folderu Arduino wgrywasz na Arduino, kod c++ kompilujesz (pamiętaj o zmianie IP, portu i portu COM bo pliku kofiguracyjnego póki co brak).
+Sketch z folderu Arduino dostosowujesz do swoich potrzeb i wgrywasz na Arduino,
+kod c++ kompilujesz (pamiętaj o zmianie IP, portu i portu COM bo pliku kofiguracyjnego póki co brak).
 Uruchamiasz w kolejności TD2, Program Arduino, Program c++
 
 ## Autorzy
