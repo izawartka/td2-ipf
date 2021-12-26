@@ -7,16 +7,48 @@
 #include <conio.h>      // for kbhit() and getch()
 #include "Serial.h"
 #include <string>
+#include "INIReader.h"
+#include <stdlib.h>
+#include <iostream>
+#include "version.h"
+using namespace std;
 
+INIReader reader("config.ini");
+string INIcom;
+int INIport;
+string INIip;
+char SETcom[] = "\\\\.\\COM6";
+const char* SETip = "192.168.1.69";
 int clientLogic(SOCKET mySocket, const sockaddr* connectionAddr);
 const int STATUS_READ = 0x1, STATUS_WRITE = 0x2, STATUS_EXCEPT = 0x4; // used by getStatus
 int getStatus(const SOCKET a_socket, int status);
 void finalWSACleanup();
 
+void ipLoad(const char * buf) {
+//    printf("Given Str = %s", buf);
+    SETip=buf;
+}
 int main()
 {
+    INIcom = reader.Get("CONFIG", "com", "UNKNOWN");
+    INIport = reader.GetInteger("CONFIG", "port", -1);
+    INIip = reader.Get("CONFIG", "ip", "UNKNOWN");
+//    cout << INIcom << endl;
+//    cout << INIport << endl;
+//    cout << INIip << endl;
+
+    char* MEMcom;
+    MEMcom = &INIcom[0];
+    strcpy(SETcom, MEMcom);
+ //   cout << SETcom << endl;
+
+    char* MEMip;
+    MEMip = &INIip[0];
+    ipLoad(MEMip);
+//   cout << SETip << endl;
+
 	sockaddr_in connectionAddress;
-	int connectionPort = 7424;
+	int connectionPort = INIport;
 
 	// initialize the socket's address
 	memset(&connectionAddress, 0, sizeof(sockaddr_in)); // initialize to zero
@@ -55,7 +87,7 @@ int main()
 	}
 
 	// connect to the server
-	const char* targetIP = "192.168.0.101"; // "::1"; // IPv6 localhost doesn't appear to work...
+	const char* targetIP = SETip; // "::1"; // IPv6 localhost doesn't appear to work...
 	unsigned long raw_ip_nbo;// = inet_addr(targetIP); // inet_addr is an old method for IPv4
 	inet_pton(AF_INET, targetIP, &raw_ip_nbo); // IPv6 method of address acquisition
 	if (raw_ip_nbo == INADDR_NONE)
@@ -88,11 +120,10 @@ int clientLogic(SOCKET mySocket, const sockaddr* connectionAddress)
 	char SPincomingData[256] = "";
 	int SPreadResult = 0;
 	int SPdataLength = 256;
-	Serial* SP = new Serial(L"COM3");
+	Serial* SP = new Serial(SETcom);
 
-	if (SP->IsConnected())
-		printf("Serial connection ready!\n");
-	
+	if (SP->IsConnected()) printf("Ustanowiono polaczenie szeregowe!\n");
+
 
 	int result, errorCode, connectionAttempts = 0;
 	bool connectionWaiting = false;
@@ -123,19 +154,19 @@ int clientLogic(SOCKET mySocket, const sockaddr* connectionAddress)
 			connectionWaiting = true;
 			break;
 		case WSAEISCONN:
-			printf("TCP/IP connection ready!                 \n");
+			printf("Ustanowiono polaczenie TCP/IP!                 \n");
 			result = WSAEISCONN;
 			break;
 		case WSAEWOULDBLOCK:
 		case WSAEALREADY:
-			printf("waiting to connect... (press esc to quit)         \r");
+			printf("oczekiwanie na polaczenie... (nacisnij esc aby anulowac)         \r");
 			connectionWaiting = true;
 			break;
 		case WSAEINVAL:
-			printf("\ninvalid argument supplied\n");
+			printf("\nniepoprawny argument\n");
 			return EXIT_FAILURE;
 		default:
-			printf("\nclient connect() error %d\n", errorCode);
+			printf("\nblad polaczenia klienta %d\n", errorCode);
 			return EXIT_FAILURE;
 		}
 	} while (result == SOCKET_ERROR || result == 0);
@@ -161,11 +192,11 @@ int clientLogic(SOCKET mySocket, const sockaddr* connectionAddress)
 				(const char*)SPincomingData, SPreadResult, 0);
 			if (result == SOCKET_ERROR)
 			{
-				printf("client send() error %d\n", WSAGetLastError());
+				printf("blad nadawania klienta %d\n", WSAGetLastError());
 				return EXIT_FAILURE;
 			}
 		}
-		
+
 
 		/*// if user types, remember what's being typed, send with enter.
 		if (_kbhit())
@@ -218,7 +249,7 @@ int clientLogic(SOCKET mySocket, const sockaddr* connectionAddress)
 				// 2-byte values respectively.
 				if (result == SOCKET_ERROR)
 				{
-					printf("client recv() error %d\n", WSAGetLastError());
+					printf("blad odbioru klienta %d\n", WSAGetLastError());
 					return EXIT_FAILURE;
 				}
 				for (int i = 0; i < result; ++i)
@@ -230,7 +261,7 @@ int clientLogic(SOCKET mySocket, const sockaddr* connectionAddress)
 			} while (howMuchInBuffer > 0);
 
 			sendToArduinoBuffer = new char[numBytesRead - 2];
-			snprintf(sendToArduinoBuffer, numBytesRead - 2, collectingBuffer);
+			printf(sendToArduinoBuffer, numBytesRead - 2, collectingBuffer);
 			sendToArduinoBuffer[numBytesRead - 3] = '\n';
 			printf("%s", sendToArduinoBuffer, numBytesRead-2);
 			SP->WriteData(sendToArduinoBuffer, numBytesRead-2);
@@ -284,11 +315,11 @@ void finalWSACleanup() // callback used to clean up sockets
 /*
 void main()
 {
-	///PRZYGOTOWANIE PO£•CZENIA SERIAL///
+	///PRZYGOTOWANIE PO≈ÅƒÑCZENIA SERIAL///
 
-	
 
-	///PRZYGOTOWANIE PO£•CZENIA TCP///
+
+	///PRZYGOTOWANIE PO≈ÅƒÑCZENIA TCP///
 
 	string ipAddress = "192.168.0.101";			// IP Address of the server
 	int port = 7424;						// Listening port # on the server
@@ -332,7 +363,7 @@ void main()
 		cout << "TCP/IP Connection ready!" << endl;
 	}
 
-	///BUFORY DLA PRZESY£ANYCH DANYCH///
+	///BUFORY DLA PRZESY≈ÅANYCH DANYCH///
 
 	char incomingData[256] = "";			// don't forget to pre-allocate memory
 	//printf("%s\n",incomingData);
