@@ -8,13 +8,13 @@ używalności, póki co jest coś takiego. Miłej zabawy!
 - Synchronizowanie stanu wszystkich urządzeń przy uruchomieniu pulpitu
 - Możliwość zsynchronizowania stanu wszystkich urządzeń "na zawołanie"
 - Uładnienie kodu (tak, jest kradziony XD)
-- Możliwość użycia pliku konfiguracyjnego
 - Wiele więcej...
 
 ## Jak używać?
-Sketch z folderu Arduino dostosowujesz do swoich potrzeb i wgrywasz na Arduino,
-kod c++ kompilujesz (pamiętaj o zmianie IP, portu i portu COM bo pliku kofiguracyjnego póki co brak).
+Sketch z folderu Arduino dostosowujesz do swoich potrzeb i wgrywasz na Arduino, ustawiasz COM, port i IP w pliku INI.
 Uruchamiasz w kolejności TD2, Program Arduino, Program c++
+
+Kompilacja programu wymaga użycia Visual C++ (najniżej sprawdzany to 2010), ze względu na używanie biblioteki winsock.
 
 ## Autorzy
 ja
