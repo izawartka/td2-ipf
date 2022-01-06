@@ -18,3 +18,4 @@ Kompilacja programu wymaga użycia Visual C++ (najniżej sprawdzany to 2010), ze
 
 ## Autorzy
 ja
++ ighor dodał obsługe pliku konfiguracyjnego
