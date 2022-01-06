@@ -17,5 +17,4 @@ Uruchamiasz w kolejności TD2, Program Arduino, Program c++
 Kompilacja programu wymaga użycia Visual C++ (najniżej sprawdzany to 2010), ze względu na używanie biblioteki winsock.
 
 ## Autorzy
-ja, 
-ighor dodał obsługe pliku konfiguracyjnego
+ja i ighor dodał obsługe pliku konfiguracyjnego
